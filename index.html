@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Voting System — College Project Demo</title>
+  <meta name="description" content="A frontend-only college project demonstration of a secure, accessible online voting system with normal and voice voting modes.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Indian National Flag Tricolor Ribbon -->
+  <div class="tricolor-ribbon" aria-hidden="true"></div>
+
+  <!-- Academic / Demo Notice Header Banner -->
+  <div class="demo-top-banner" role="banner">
+    <div class="banner-content">
+      <span class="badge-warning">COLLEGE PROJECT DEMO</span>
+      <span class="banner-text">Frontend Simulation Only &bull; No real voting &bull; No real voter ID required &bull; 100% Local Demo</span>
+      <button class="flow-pill-btn" id="headerFlowBtn" title="View System Flowchart and Architecture">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        System Flow
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Navigation Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-area" tabindex="0" role="link" id="brandLogo" aria-label="Online Voting System Home">
+        <div class="brand-icon voting-logo-wrap" title="Online Voting System — Indian Tricolor Civic Tech Logo">
+          <!-- Indian Tricolor Voting Emblem / Ballot Box SVG Logo -->
+          <svg width="30" height="30" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Saffron Arc Top -->
+            <path d="M5 12C9 7 18 5 31 10" stroke="#FF9933" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Ballot Box Base -->
+            <rect x="5" y="13" width="26" height="18" rx="3" fill="#1E293B" stroke="#475569" stroke-width="1.5"/>
+            <!-- Tricolor Bands on Ballot Box -->
+            <path d="M5 24C12 23 20 25 31 24V28C31 29.6569 29.6569 31 28 31H8C6.34315 31 5 29.6569 5 28V24Z" fill="#138808" fill-opacity="0.35"/>
+            <path d="M5 19C12 18 20 20 31 19V24C20 25 12 23 5 24V19Z" fill="#FFFFFF" fill-opacity="0.25"/>
+            <path d="M5 14C12 13 20 15 31 14V19C20 20 12 18 5 19V14Z" fill="#FF9933" fill-opacity="0.35"/>
+            <!-- Ballot Slot -->
+            <rect x="11" y="12" width="14" height="2.2" rx="1" fill="#0F172A" stroke="#38BDF8" stroke-width="0.8"/>
+            <!-- Ballot Paper Entering Slot -->
+            <path d="M13 4C13 3.44772 13.4477 3 14 3H22C22.5523 3 23 3.44772 23 4V13H13V4Z" fill="#FFFFFF" stroke="#000080" stroke-width="1.2"/>
+            <!-- 24-Spoke / Inked Vote Stamp Mark -->
+            <circle cx="18" cy="8" r="3" stroke="#000080" stroke-width="0.7" stroke-dasharray="1.2 0.8"/>
+            <!-- Green Electoral Checkmark -->
+            <path d="M16.5 8L17.5 9L19.5 7" stroke="#138808" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- India Green Arc Bottom -->
+            <path d="M5 33C14 36 24 35 31 31" stroke="#138808" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="brand-titles">
+          <div class="brand-title-row">
+            <h1 class="brand-name">ONLINE VOTING SYSTEM</h1>
+            <span class="flag-icon-badge" title="Tricolor Civic Tech Demo">🇮🇳</span>
+          </div>
+          <p class="brand-tagline">COLLEGE PROJECT &bull; DIGITAL DEMOCRACY DEMO</p>
+        </div>
+      </div>
+
+      <!-- Quick Accessibility & Helper Controls -->
+      <div class="header-tools">
+        <!-- Live Tally Quick Button -->
+        <button id="viewTallyBtn" class="tool-btn" title="View Live Demo Vote Tally" aria-label="View Vote Tally">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+          <span class="tool-label">Demo Tally</span>
+        </button>
+
+        <!-- Sound Toggle -->
+        <button id="soundToggleBtn" class="tool-btn active" title="Toggle Demo Sound Effects" aria-label="Toggle Sound Effects">
+          <svg id="soundIconOn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+          <svg id="soundIconOff" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+          <span class="tool-label">Sound</span>
+        </button>
+
+        <!-- Text Size Toggle -->
+        <div class="font-size-group" role="group" aria-label="Font size controls">
+          <button id="fontSizeDec" class="tool-btn icon-only" title="Decrease font size" aria-label="Decrease text size">A-</button>
+          <button id="fontSizeInc" class="tool-btn icon-only" title="Increase font size" aria-label="Increase text size">A+</button>
+        </div>
+
+        <!-- High Contrast Mode Toggle -->
+        <button id="contrastToggleBtn" class="tool-btn icon-only" title="Toggle High Contrast Mode" aria-label="Toggle High Contrast Mode">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor"/></svg>
+        </button>
+
+        <!-- Restart Demo -->
+        <button id="headerRestartBtn" class="tool-btn restart-btn" title="Restart Demo from Step 1" aria-label="Restart Demo">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          <span class="tool-label">Restart</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Progress Bar Stepper Indicator -->
+  <nav class="stepper-section" aria-label="Demo Progress Steps">
+    <div class="stepper-container">
+      <ol class="stepper-track" id="stepperTrack">
+        <li class="step-item active" data-step="1">
+          <div class="step-bubble">
+            <span class="step-num">1</span>
+            <svg class="step-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <span class="step-title">Welcome</span>
+        </li>
+        <li class="step-connector"></li>
+        <li class="step-item" data-step="2">
+          <div class="step-bubble">
+            <span class="step-num">2</span>
+            <svg class="step-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <span class="step-title">Voter ID</span>
+        </li>
+        <li class="step-connector"></li>
+        <li class="step-item" data-step="3">
+          <div class="step-bubble">
+            <span class="step-num">3</span>
+            <svg class="step-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <span class="step-title">Mode</span>
+        </li>
+        <li class="step-connector"></li>
+        <li class="step-item" data-step="4">
+          <div class="step-bubble">
+            <span class="step-num">4</span>
+            <svg class="step-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <span class="step-title">Vote</span>
+        </li>
+        <li class="step-connector"></li>
+        <li class="step-item" data-step="5">
+          <div class="step-bubble">
+            <span class="step-num">5</span>
+            <svg class="step-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <span class="step-title">Confirm</span>
+        </li>
+        <li class="step-connector"></li>
+        <li class="step-item" data-step="6">
+          <div class="step-bubble">
+            <span class="step-num">6</span>
+            <svg class="step-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <span class="step-title">Recorded</span>
+        </li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- Live Announcer for Screen Readers -->
+  <div id="srAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+
+
+  <!-- Main Container for All Steps -->
+  <main class="main-content" id="mainContent">
+
+    <!-- ==========================================
+         STEP 1: WELCOME / LANDING SCREEN
+         ========================================== -->
+    <section class="step-card active" id="step1" aria-labelledby="step1Heading">
+      <div class="welcome-hero">
+        <div class="hero-badge tricolor-hero-badge">
+          <span class="pulse-dot"></span>
+          <span>🇮🇳 DIGITAL DEMOCRACY &bull; COLLEGE PROJECT DEMO</span>
+        </div>
+        <h2 id="step1Heading" class="hero-title">ONLINE VOTING SYSTEM</h2>
+        <p class="hero-subtitle">Secure &amp; Accessible Digital Voting</p>
+        <p class="hero-desc">
+          A modern, accessible frontend demonstration of an electronic voting workflow. 
+          Built exclusively with HTML, CSS, and Vanilla JavaScript for college project presentation. 
+          Features dual-mode voting (Standard &amp; Voice-assisted), mock identity verification, 
+          and instant ballot confirmation.
+        </p>
+
+        <!-- Project Highlights Grid -->
+        <div class="highlights-grid">
+          <div class="highlight-item">
+            <div class="hi-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="hi-text">
+              <strong>Voter ID Verification</strong>
+              <span>Mock authentication &amp; duplicate vote prevention</span>
+            </div>
+          </div>
+
+          <div class="highlight-item">
+            <div class="hi-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </div>
+            <div class="hi-text">
+              <strong>Dual Mode Selection</strong>
+              <span>Standard UI &amp; Voice-assisted accessibility demo</span>
+            </div>
+          </div>
+
+          <div class="highlight-item">
+            <div class="hi-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="hi-text">
+              <strong>Instant Confirmation</strong>
+              <span>Verification receipt with mock transaction hash</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Call to Action Buttons -->
+        <div class="step-actions center-actions">
+          <button class="btn btn-primary btn-large" id="btnStartDemo">
+            <span>Start Demo</span>
+          </button>
+          <button class="btn btn-secondary" id="btnViewFlowStep1">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span>View Project Flow</span>
+          </button>
+        </div>
+
+        <p class="demo-disclaimer-text">
+          * Notice: This is a college demonstration project. No real election or personal data is collected or transmitted.
+        </p>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         STEP 2: VOTER ID VERIFICATION
+         ========================================== -->
+    <section class="step-card" id="step2" aria-labelledby="step2Heading">
+      <div class="card-header">
+        <span class="step-chip">STEP 2 OF 6</span>
+        <h2 id="step2Heading" class="card-title">Voter Verification</h2>
+        <p class="card-subtitle">Enter your demo voter identification code to proceed to the ballot.</p>
+      </div>
+
+      <div class="card-body">
+        <div class="input-card">
+          <label for="voterIdInput" class="form-label">
+            <span>Demo Voter ID</span>
+            <span class="required-star">*</span>
+          </label>
+          <div class="input-wrapper">
+            <div class="input-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><line x1="15" y1="8" x2="17" y2="8"/><line x1="15" y1="12" x2="17" y2="12"/><line x1="7" y1="16" x2="17" y2="16"/></svg>
+            </div>
+            <input 
+              type="text" 
+              id="voterIdInput" 
+              class="form-input" 
+              placeholder="e.g. DEMO123, VOTER-2026, or your name"
+              maxlength="30"
+              autocomplete="off"
+              spellcheck="false"
+              aria-describedby="voterIdHelp"
+            >
+            <button type="button" id="clearVoterIdBtn" class="clear-input-btn" title="Clear input" aria-label="Clear input">✕</button>
+          </div>
+
+          <!-- Helper and Quick Presets -->
+          <div id="voterIdHelp" class="input-hint">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span>Demo mode: use any sample ID such as <code>DEMO123</code> or pick a preset below:</span>
+          </div>
+
+          <!-- Quick Fill Sample Chips -->
+          <div class="preset-chips" aria-label="Sample Voter IDs">
+            <span class="preset-label">Quick Presets:</span>
+            <button type="button" class="preset-chip" data-id="DEMO123">DEMO123</button>
+            <button type="button" class="preset-chip" data-id="VOTER-2026">VOTER-2026</button>
+            <button type="button" class="preset-chip" data-id="STUDENT-404">STUDENT-404</button>
+          </div>
+
+          <!-- Feedback message box -->
+          <div class="feedback-msg" id="voterIdFeedback" role="alert" style="display:none;"></div>
+        </div>
+
+        <!-- Mock Security Notice Box -->
+        <div class="security-callout">
+          <div class="sec-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div class="sec-info">
+            <strong>Mock Authentication Rule</strong>
+            <p>Any non-empty ID is accepted for demonstration. Duplicate IDs voted in this browser session will trigger the duplicate vote prevention alert.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-actions space-between">
+        <button class="btn btn-secondary" id="btnBackToStep1">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          <span>Back</span>
+        </button>
+        <button class="btn btn-primary" id="btnVerifyVoterId">
+          <span>Verify &amp; Continue</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         STEP 3: CHOOSE VOTING MODE
+         ========================================== -->
+    <section class="step-card" id="step3" aria-labelledby="step3Heading">
+      <div class="card-header">
+        <span class="step-chip">STEP 3 OF 6</span>
+        <h2 id="step3Heading" class="card-title">Choose Voting Mode</h2>
+        <p class="card-subtitle">Select how you would like to cast your demo ballot.</p>
+      </div>
+
+      <div class="card-body">
+        <div class="mode-cards-grid" role="radiogroup" aria-label="Voting Mode Selection">
+          
+          <!-- Mode 1: Normal Voting -->
+          <div class="mode-card" id="modeNormalCard" role="radio" aria-checked="false" tabindex="0" data-mode="normal">
+            <div class="mode-badge">STANDARD</div>
+            <div class="mode-icon-circle">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <h3 class="mode-title">NORMAL VOTING</h3>
+            <p class="mode-desc">Standard interactive voting interface. Browse candidates visually and select with a click or keyboard.</p>
+            <div class="mode-features">
+              <span>✓ Visual Candidate Grid</span>
+              <span>✓ Clean One-Click Selection</span>
+              <span>✓ Keyboard Navigation</span>
+            </div>
+            <div class="mode-select-indicator">
+              <span class="radio-dot"></span>
+              <span class="select-label">Select Normal Voting</span>
+            </div>
+          </div>
+
+          <!-- Mode 2: Voice Voting -->
+          <div class="mode-card" id="modeVoiceCard" role="radio" aria-checked="false" tabindex="0" data-mode="voice">
+            <div class="mode-badge accessible-badge">ACCESSIBLE</div>
+            <div class="mode-icon-circle voice-circle">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </div>
+            <h3 class="mode-title">VOICE VOTING</h3>
+            <p class="mode-desc">Accessible voice-based demonstration. Simulates speech recognition for hands-free and assistive voting.</p>
+            <div class="mode-features">
+              <span>✓ Audio-Visual Feedback</span>
+              <span>✓ Simulated Speech Recognition</span>
+              <span>✓ Accessibility Support</span>
+            </div>
+            <div class="mode-select-indicator">
+              <span class="radio-dot"></span>
+              <span class="select-label">Select Voice Voting</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="feedback-msg" id="modeFeedback" role="alert" style="display:none;"></div>
+      </div>
+
+      <div class="step-actions space-between">
+        <button class="btn btn-secondary" id="btnBackToStep2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          <span>Back to Voter ID</span>
+        </button>
+        <button class="btn btn-primary" id="btnContinueMode">
+          <span>Continue</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         STEP 4A: NORMAL VOTING (CANDIDATE SELECTION)
+         ========================================== -->
+    <section class="step-card" id="step4Normal" aria-labelledby="step4NormalHeading">
+      <div class="card-header">
+        <div class="header-split">
+          <div>
+            <span class="step-chip">STEP 4 OF 6 &bull; NORMAL MODE</span>
+            <h2 id="step4NormalHeading" class="card-title">Select Candidate</h2>
+            <p class="card-subtitle">Select exactly <strong>one</strong> candidate to cast your vote.</p>
+          </div>
+          <div class="voting-voter-badge">
+            <span class="voter-label">Voter:</span>
+            <span class="voter-display-id" id="displayVoterIdNormal">DEMO123</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="candidates-grid" role="radiogroup" aria-label="Candidates Ballot">
+          
+          <!-- Candidate A -->
+          <div class="candidate-card" data-candidate-id="A" role="radio" aria-checked="false" tabindex="0">
+            <div class="candidate-header">
+              <div class="candidate-num">#01</div>
+              <div class="candidate-symbol symbol-a" title="Symbol: Solar Energy">⚡</div>
+            </div>
+            <div class="candidate-avatar avatar-a">
+              <span>CA</span>
+            </div>
+            <div class="candidate-info">
+              <h3 class="candidate-name">Candidate A</h3>
+              <p class="candidate-party">Tech &amp; Innovation Alliance</p>
+              <p class="candidate-motto">"Advancing digital infrastructure and future opportunities."</p>
+            </div>
+            <div class="candidate-select-btn">
+              <span class="select-indicator-dot"></span>
+              <span class="select-text">Select Candidate A</span>
+            </div>
+          </div>
+
+          <!-- Candidate B -->
+          <div class="candidate-card" data-candidate-id="B" role="radio" aria-checked="false" tabindex="0">
+            <div class="candidate-header">
+              <div class="candidate-num">#02</div>
+              <div class="candidate-symbol symbol-b" title="Symbol: Green Initiative">🌿</div>
+            </div>
+            <div class="candidate-avatar avatar-b">
+              <span>CB</span>
+            </div>
+            <div class="candidate-info">
+              <h3 class="candidate-name">Candidate B</h3>
+              <p class="candidate-party">Campus Ecology &amp; Green Initiative</p>
+              <p class="candidate-motto">"Sustainability, green campuses, and renewable development."</p>
+            </div>
+            <div class="candidate-select-btn">
+              <span class="select-indicator-dot"></span>
+              <span class="select-text">Select Candidate B</span>
+            </div>
+          </div>
+
+          <!-- Candidate C -->
+          <div class="candidate-card" data-candidate-id="C" role="radio" aria-checked="false" tabindex="0">
+            <div class="candidate-header">
+              <div class="candidate-num">#03</div>
+              <div class="candidate-symbol symbol-c" title="Symbol: Education">📚</div>
+            </div>
+            <div class="candidate-avatar avatar-c">
+              <span>CC</span>
+            </div>
+            <div class="candidate-info">
+              <h3 class="candidate-name">Candidate C</h3>
+              <p class="candidate-party">Student Welfare &amp; Education Reform</p>
+              <p class="candidate-motto">"Empowering learning, research grants, and student rights."</p>
+            </div>
+            <div class="candidate-select-btn">
+              <span class="select-indicator-dot"></span>
+              <span class="select-text">Select Candidate C</span>
+            </div>
+          </div>
+
+          <!-- Candidate D -->
+          <div class="candidate-card" data-candidate-id="D" role="radio" aria-checked="false" tabindex="0">
+            <div class="candidate-header">
+              <div class="candidate-num">#04</div>
+              <div class="candidate-symbol symbol-d" title="Symbol: Civic Shield">🛡️</div>
+            </div>
+            <div class="candidate-avatar avatar-d">
+              <span>CD</span>
+            </div>
+            <div class="candidate-info">
+              <h3 class="candidate-name">Candidate D</h3>
+              <p class="candidate-party">Civic Governance &amp; Ethics Forum</p>
+              <p class="candidate-motto">"Transparent governance, ethics, and accessible services."</p>
+            </div>
+            <div class="candidate-select-btn">
+              <span class="select-indicator-dot"></span>
+              <span class="select-text">Select Candidate D</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="feedback-msg" id="candidateFeedback" role="alert" style="display:none;"></div>
+      </div>
+
+      <div class="step-actions space-between">
+        <button class="btn btn-secondary" id="btnBackToStep3FromNormal">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          <span>Change Mode</span>
+        </button>
+        <button class="btn btn-primary" id="btnContinueCandidate">
+          <span>Continue to Confirmation</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         STEP 4B: VOICE VOTING (SIMULATION)
+         ========================================== -->
+    <section class="step-card" id="step4Voice" aria-labelledby="step4VoiceHeading">
+      <div class="card-header">
+        <div class="header-split">
+          <div>
+            <span class="step-chip accessible-chip">STEP 4 OF 6 &bull; VOICE ASSISTED</span>
+            <h2 id="step4VoiceHeading" class="card-title">Voice Voting Demonstration</h2>
+            <p class="card-subtitle">Simulated speech recognition for accessible hands-free voting.</p>
+          </div>
+          <div class="voting-voter-badge">
+            <span class="voter-label">Voter:</span>
+            <span class="voter-display-id" id="displayVoterIdVoice">DEMO123</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="voice-demo-container">
+          
+          <!-- Visual Audio Waveform & Status Box -->
+          <div class="mic-visualizer-box">
+            <div class="mic-indicator-wrap">
+              <div class="mic-pulse-ring ring-1"></div>
+              <div class="mic-pulse-ring ring-2"></div>
+              <div class="mic-pulse-ring ring-3"></div>
+              <div class="mic-icon-bubble" id="micBubble">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+              </div>
+            </div>
+
+            <!-- Animated Audio Waveform Bars -->
+            <div class="wave-bars" id="waveBars">
+              <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+              <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+              <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+              <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+            </div>
+
+            <div class="voice-status-badge" id="voiceStatusBadge">
+              <span class="status-dot"></span>
+              <span id="voiceStatusText">Ready to start voice demo</span>
+            </div>
+          </div>
+
+          <!-- Voice Simulation Progress Stepper Log -->
+          <div class="voice-log-box" id="voiceLogBox">
+            <div class="log-title">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+              Speech Processing Pipeline (Simulation)
+            </div>
+            <ol class="voice-steps-log" id="voiceStepsLog">
+              <li class="log-item ready" id="logStep1">
+                <span class="log-icon">1</span>
+                <span>Click "Start Voice Demo"</span>
+              </li>
+              <li class="log-item" id="logStep2">
+                <span class="log-icon">2</span>
+                <span>Listening for spoken candidate name...</span>
+              </li>
+              <li class="log-item" id="logStep3">
+                <span class="log-icon">3</span>
+                <span>Processing natural language audio model...</span>
+              </li>
+              <li class="log-item" id="logStep4">
+                <span class="log-icon">4</span>
+                <span>Recognized choice: <strong id="recognizedCandidateLabel">"Waiting for speech..."</strong></span>
+              </li>
+              <li class="log-item" id="logStep5">
+                <span class="log-icon">5</span>
+                <span>Candidate automatically selected</span>
+              </li>
+            </ol>
+          </div>
+
+          <!-- Trigger Button for Simulation -->
+          <div class="voice-actions-row">
+            <button type="button" class="btn btn-voice" id="btnStartVoiceDemo">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <span id="voiceBtnText">Start Voice Demo</span>
+            </button>
+          </div>
+
+          <!-- Manual Fallback Choice for Accessibility & Flexibility -->
+          <div class="voice-fallback-section">
+            <div class="fallback-header">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <span>Accessibility Fallback: Choose candidate manually</span>
+            </div>
+            <div class="voice-fallback-grid">
+              <button type="button" class="fallback-btn" data-candidate="A">Candidate A (⚡ Tech Alliance)</button>
+              <button type="button" class="fallback-btn" data-candidate="B">Candidate B (🌿 Green Initiative)</button>
+              <button type="button" class="fallback-btn" data-candidate="C">Candidate C (📚 Education Reform)</button>
+              <button type="button" class="fallback-btn" data-candidate="D">Candidate D (🛡️ Civic Ethics)</button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="feedback-msg" id="voiceFeedback" role="alert" style="display:none;"></div>
+      </div>
+
+      <div class="step-actions space-between">
+        <button class="btn btn-secondary" id="btnBackToStep3FromVoice">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          <span>Change Mode</span>
+        </button>
+        <button class="btn btn-primary" id="btnContinueVoice">
+          <span>Continue to Confirmation</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         STEP 5: CONFIRM VOTE
+         ========================================== -->
+    <section class="step-card" id="step5" aria-labelledby="step5Heading">
+      <div class="card-header">
+        <span class="step-chip">STEP 5 OF 6</span>
+        <h2 id="step5Heading" class="card-title">Review &amp; Confirm Vote</h2>
+        <p class="card-subtitle">Please review your ballot summary carefully before final submission.</p>
+      </div>
+
+      <div class="card-body">
+        <div class="summary-card">
+          <div class="summary-card-header">
+            <div class="sec-badge">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>BALLOT REVIEW SUMMARY</span>
+            </div>
+            <span class="status-pill verified">Verified Demo ID</span>
+          </div>
+
+          <div class="summary-details-grid">
+            <!-- Voter ID Field -->
+            <div class="summary-row">
+              <div class="summary-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/></svg>
+                Voter ID:
+              </div>
+              <div class="summary-value font-mono" id="confirmVoterId">DEMO123</div>
+            </div>
+
+            <!-- Mode Field -->
+            <div class="summary-row">
+              <div class="summary-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+                Voting Mode:
+              </div>
+              <div class="summary-value" id="confirmVotingMode">
+                <span class="mode-tag-pill" id="confirmModeTag">Normal Voting</span>
+              </div>
+            </div>
+
+            <!-- Selected Candidate Card Highlight -->
+            <div class="summary-row candidate-highlight-row">
+              <div class="summary-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+                Selected Candidate:
+              </div>
+              <div class="summary-value highlight-cand" id="confirmCandidateCard">
+                <div class="cand-confirm-symbol" id="confirmCandSymbol">🌿</div>
+                <div class="cand-confirm-text">
+                  <strong class="cand-confirm-name" id="confirmCandName">Candidate B</strong>
+                  <span class="cand-confirm-party" id="confirmCandParty">Campus Ecology &amp; Green Initiative</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Timestamp -->
+            <div class="summary-row">
+              <div class="summary-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Timestamp:
+              </div>
+              <div class="summary-value font-mono" id="confirmTimestamp">--:--:--</div>
+            </div>
+          </div>
+
+          <!-- Warning Notice -->
+          <div class="confirmation-warning">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span>Once confirmed, your demo vote will be simulated and recorded. This action cannot be undone for this voter ID.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-actions space-between">
+        <button class="btn btn-secondary" id="btnBackFromConfirm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          <span>Go Back</span>
+        </button>
+        <button class="btn btn-success btn-large" id="btnConfirmVote">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Confirm Vote</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         STEP 6: VOTE RECORDED (SUCCESS SCREEN)
+         ========================================== -->
+    <section class="step-card" id="step6" aria-labelledby="step6Heading">
+      <div class="success-screen">
+        
+        <!-- Animated Checkmark Graphic -->
+        <div class="success-animation-wrap">
+          <div class="checkmark-circle">
+            <svg class="checkmark-svg" viewBox="0 0 52 52">
+              <circle class="checkmark-circle-bg" cx="26" cy="26" r="25" fill="none"/>
+              <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+          </div>
+        </div>
+
+        <span class="success-pill-badge">SIMULATION COMPLETED</span>
+        <h2 id="step6Heading" class="success-title">Vote Recorded</h2>
+        <p class="success-desc">
+          Your demo vote has been successfully recorded in this local session.
+        </p>
+
+        <!-- Digital Demo Receipt Card -->
+        <div class="receipt-card">
+          <div class="receipt-header">
+            <div class="receipt-brand">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              <span>DEMO AUDIT RECEIPT</span>
+            </div>
+            <span class="receipt-badge">LOCAL MOCK ONLY</span>
+          </div>
+
+          <div class="receipt-body">
+            <div class="receipt-row">
+              <span class="receipt-key">Demo Transaction ID:</span>
+              <span class="receipt-val font-mono highlight-tx" id="receiptTxId">DEMO-TX-849201</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-key">Voter ID (Masked):</span>
+              <span class="receipt-val font-mono" id="receiptMaskedId">DEM****123</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-key">Mode Used:</span>
+              <span class="receipt-val" id="receiptMode">Voice Voting</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-key">Ballot Choice:</span>
+              <span class="receipt-val font-semibold" id="receiptCandidate">Candidate B (🌿 Green Initiative)</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-key">Timestamp:</span>
+              <span class="receipt-val font-mono" id="receiptTime">--:--:--</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-key">Integrity Hash:</span>
+              <span class="receipt-val font-mono text-muted" id="receiptHash">SHA256-MOCK-e3b0c44298fc1c</span>
+            </div>
+          </div>
+
+          <div class="receipt-footer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span>College project proof-of-concept. No blockchain or external server utilized.</span>
+          </div>
+        </div>
+
+        <!-- Success Actions -->
+        <div class="step-actions center-actions">
+          <button class="btn btn-primary btn-large" id="btnStartNewDemo">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            <span>Start New Demo</span>
+          </button>
+          
+          <button class="btn btn-secondary" id="btnViewFlowFromSuccess">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span>View System Flow</span>
+          </button>
+
+          <button class="btn btn-secondary" id="btnViewTallyFromSuccess">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            <span>Live Tally</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================
+       MODAL: SYSTEM FLOW & ARCHITECTURE (STEP 7 / PPT)
+       ========================================== -->
+  <div class="modal-backdrop" id="flowModal" role="dialog" aria-modal="true" aria-labelledby="flowModalTitle" style="display:none;">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-header-text">
+          <span class="badge-modal">PROJECT PRESENTATION GUIDE</span>
+          <h2 id="flowModalTitle" class="modal-title">System Architecture &amp; Project Flow</h2>
+        </div>
+        <button class="modal-close-btn" id="closeFlowModalBtn" aria-label="Close modal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        
+        <!-- PPT Flow Chart Diagram -->
+        <div class="architecture-section">
+          <h3 class="arch-heading">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Interactive System Flow (PPT Diagram)
+          </h3>
+          <div class="flowchart-container">
+            <div class="flow-step-box">
+              <span class="flow-step-num">1</span>
+              <strong class="flow-step-name">Open System</strong>
+              <small class="flow-step-sub">Landing &amp; Overview</small>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step-box">
+              <span class="flow-step-num">2</span>
+              <strong class="flow-step-name">Enter Voter ID</strong>
+              <small class="flow-step-sub">Unique identification input</small>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step-box">
+              <span class="flow-step-num">3</span>
+              <strong class="flow-step-name">Verify</strong>
+              <small class="flow-step-sub">Eligibility &amp; duplicate check</small>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step-box">
+              <span class="flow-step-num">4</span>
+              <strong class="flow-step-name">Choose Mode</strong>
+              <small class="flow-step-sub">Normal or Voice voting</small>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step-box">
+              <span class="flow-step-num">5</span>
+              <strong class="flow-step-name">Select Choice</strong>
+              <small class="flow-step-sub">Candidate ballot selection</small>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step-box">
+              <span class="flow-step-num">6</span>
+              <strong class="flow-step-name">Confirm</strong>
+              <small class="flow-step-sub">Ballot review &amp; confirmation</small>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step-box highlight-box">
+              <span class="flow-step-num">7</span>
+              <strong class="flow-step-name">Vote Recorded</strong>
+              <small class="flow-step-sub">Audit transaction receipt</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Key Project Features Grid -->
+        <div class="features-section">
+          <h3 class="arch-heading">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Key Project Highlights
+          </h3>
+          <div class="features-cards-grid">
+            <div class="feature-card">
+              <div class="feat-badge">01</div>
+              <strong>Voter ID Verification</strong>
+              <p>Ensures that every voter provides a valid demo ID with client-side formatting checks.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feat-badge">02</div>
+              <strong>Normal Online Voting</strong>
+              <p>Clean, accessible digital ballot designed for standard laptop and mobile touchscreen inputs.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feat-badge">03</div>
+              <strong>Voice Voting Demo</strong>
+              <p>Simulates real-time speech recognition for hands-free and assistive accessibility workflows.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feat-badge">04</div>
+              <strong>Accessibility Support</strong>
+              <p>High contrast toggle, text resizing, ARIA tags, and complete keyboard Enter navigation.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feat-badge">05</div>
+              <strong>Duplicate Vote Prevention</strong>
+              <p>Prevents duplicate submissions under the same ID during an active demo presentation session.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feat-badge">06</div>
+              <strong>Vote Confirmation</strong>
+              <p>Explicit summary review step to prevent accidental mis-votes with simulated receipt hashing.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Technology Stack Section -->
+        <div class="tech-stack-section">
+          <h3 class="arch-heading">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            Technology Stack &amp; Extension Roadmap
+          </h3>
+
+          <div class="tech-pills-row">
+            <div class="tech-pill active-tech">
+              <strong>HTML5</strong>
+              <span>Semantic Accessible Layout</span>
+            </div>
+            <div class="tech-pill active-tech">
+              <strong>CSS3</strong>
+              <span>Custom Variables &amp; Flex/Grid</span>
+            </div>
+            <div class="tech-pill active-tech">
+              <strong>Vanilla JavaScript</strong>
+              <span>ES6+ State &amp; Keyboard Router</span>
+            </div>
+          </div>
+
+          <div class="roadmap-box">
+            <h4>Concept Expansion Roadmap (For College Presentation):</h4>
+            <p>
+              In a full-scale production system, this prototype architecture can be extended with:
+            </p>
+            <ul>
+              <li><strong>Frontend:</strong> React.js, Vue.js, or Angular with TailwindCSS</li>
+              <li><strong>Backend:</strong> Node.js (Express), Python (FastAPI/Django), or Go</li>
+              <li><strong>Database:</strong> PostgreSQL, MySQL, or MongoDB with encrypted audit tables</li>
+              <li><strong>Speech Processing:</strong> Web Speech API or OpenAI Whisper for production voice capture</li>
+              <li><strong>Identity Verification:</strong> Optical Character Recognition (OCR) &amp; Biometric/Face Match</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="btnModalStartDemo">Start Demo Now</button>
+        <button class="btn btn-secondary" id="btnModalClose">Close Guide</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL: LIVE DEMO VOTE TALLY
+       ========================================== -->
+  <div class="modal-backdrop" id="tallyModal" role="dialog" aria-modal="true" aria-labelledby="tallyModalTitle" style="display:none;">
+    <div class="modal-dialog tally-dialog">
+      <div class="modal-header">
+        <div class="modal-header-text">
+          <span class="badge-modal">LOCAL SESSION RESULTS</span>
+          <h2 id="tallyModalTitle" class="modal-title">Live Demo Vote Tally</h2>
+        </div>
+        <button class="modal-close-btn" id="closeTallyModalBtn" aria-label="Close tally modal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <p class="tally-intro">
+          This tally reflects votes cast in your current browser session across all demo runs.
+        </p>
+
+        <div class="tally-stats-bar">
+          <div class="stat-box">
+            <span class="stat-num" id="totalVotesCount">0</span>
+            <span class="stat-lbl">Total Demo Votes</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num" id="normalVotesCount">0</span>
+            <span class="stat-lbl">Normal Mode</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num" id="voiceVotesCount">0</span>
+            <span class="stat-lbl">Voice Mode</span>
+          </div>
+        </div>
+
+        <div class="tally-chart-list" id="tallyChartList">
+          <!-- Populated by script.js -->
+        </div>
+
+        <div class="tally-actions-row">
+          <button type="button" class="btn btn-secondary btn-sm" id="btnResetTally">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+            Reset Session Tally
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="btnCloseTallyModal">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <strong>Online Voting System</strong> &bull; College Project Demonstration
+      </div>
+      <div class="footer-right">
+        <span>Pure Frontend &bull; HTML5 &bull; CSS3 &bull; Vanilla JS</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
